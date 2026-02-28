@@ -1,93 +1,87 @@
+/* Container Layout */
+.bundle-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  font-family: sans-serif;
+}
+
 .bundle-grid {
-  display: grid;
-  grid-template-columns: 1fr 350px;
+  display: flex;
+  flex-direction: row;
   gap: 40px;
-  padding: 20px;
+  align-items: flex-start;
+}
+
+/* Left Column - Flavors */
+.flavors-column {
+  flex: 2; /* Takes up more space */
 }
 
 .product-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 20px;
 }
 
-.flavor-card {
-  border-radius: 15px;
-  padding: 20px;
-  text-align: center;
-  position: relative;
-}
-
-.flavor-card img {
-  max-width: 100%;
-  height: auto;
-  margin-bottom: 15px;
-}
-
-.add-to-bundle {
-  width: 100%;
-  padding: 10px;
-  border-radius: 20px;
-  border: 1px solid #000;
-  background: white;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.add-to-bundle:disabled {
-  background: #99a194;
-  border-color: #99a194;
-  color: white;
-  cursor: not-allowed;
-}
-
-/* Sidebar Styling */
-.sidebar-card {
-  border: 1px solid #e0e0e0;
-  border-radius: 20px;
-  padding: 25px;
+/* Right Column - Sidebar */
+.bundle-sidebar {
+  flex: 1; /* Narrower sidebar */
   position: sticky;
   top: 20px;
 }
 
+.sidebar-card {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+/* Sidebar Elements */
 .size-selector {
   display: flex;
-  gap: 10px;
-  margin-top: 10px;
+  gap: 8px;
+  margin: 15px 0;
 }
 
 .size-btn {
   flex: 1;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background: white;
+  padding: 10px 5px;
+  border: 1px solid #ddd;
+  background: transparent;
+  cursor: pointer;
+  font-size: 12px;
+  text-transform: uppercase;
 }
 
 .size-btn.active {
-  border: 2px solid #000;
+  border-color: #000;
+  background: #f9f9f9;
   font-weight: bold;
-}
-
-.selected-slots {
-  display: flex;
-  gap: 10px;
-  margin: 15px 0;
-}
-
-.slot {
-  width: 50px;
-  height: 50px;
-  border: 1px dashed #ccc;
-  border-radius: 50%;
 }
 
 .cta-button {
   width: 100%;
   padding: 15px;
-  background: #99a194; /* Greyed out until full */
-  color: white;
+  background: #99a194; /* Match the grey in your image */
+  color: #fff;
   border: none;
-  border-radius: 25px;
+  border-radius: 30px;
   font-weight: bold;
+  text-transform: uppercase;
+  margin-top: 20px;
+  cursor: not-allowed;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .bundle-grid {
+    flex-direction: column;
+  }
+  .bundle-sidebar {
+    position: relative;
+    width: 100%;
+  }
 }
