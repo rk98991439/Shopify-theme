@@ -16,9 +16,9 @@
               </div>
               
               {% if block.settings.flavor_img != blank %}
-                <img src="{{ block.settings.flavor_img | img_url: '400x' }}" alt="{{ block.settings.title }}">
+                <img src="{{ block.settings.flavor_img | img_url: '400x' }}" alt="{{ block.settings.title }}" class="flavor-item-img">
               {% else %}
-                {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg flavor-item-img' }}
               {% endif %}
               
               <h3 class="flavor-name">{{ block.settings.title }}</h3>
@@ -40,18 +40,18 @@
           <div class="sidebar-step">
             <p><strong>1</strong> Select Size</p>
             <div class="size-options">
-              <button class="size-box active">12 PACK</button>
-              <button class="size-box">24 PACK</button>
-              <button class="size-box">36 PACK</button>
+              <button class="size-box active" data-slots="3">12 PACK</button>
+              <button class="size-box" data-slots="6">24 PACK</button>
+              <button class="size-box" data-slots="9">36 PACK</button>
             </div>
           </div>
 
           <div class="sidebar-step">
-            <p><strong>2</strong> Choose Flavors (0/12)</p>
-            <div class="slot-circles">
-              <div class="circle">+</div>
-              <div class="circle">+</div>
-              <div class="circle">+</div>
+            <p id="bundle-counter-text"><strong>2</strong> Choose Flavors (0/12)</p>
+            <div class="slot-circles" id="bundle-slots-container">
+              <div class="circle empty">+</div>
+              <div class="circle empty">+</div>
+              <div class="circle empty">+</div>
             </div>
           </div>
 
@@ -66,91 +66,106 @@
 
 {% comment %} 2. THE CSS (THE STYLE) {% endcomment %}
 <style>
-  .bundle-main-wrapper { padding: 40px 0; font-family: sans-serif; }
+  .bundle-main-wrapper { padding: 40px 0; font-family: sans-serif; color: #333; }
   .bundle-container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
   
-  /* Layout */
-  .bundle-grid { display: flex; gap: 40px; }
+  .bundle-grid { display: flex; gap: 40px; align-items: flex-start; }
   .flavors-column { flex: 3; }
   .bundle-sidebar { flex: 1; position: sticky; top: 20px; }
 
-  /* Product Cards */
-  .product-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
-  .flavor-card { border-radius: 12px; padding: 20px; text-align: center; position: relative; }
-  .flavor-card img { width: 100%; height: auto; margin: 10px 0; }
+  .product-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .flavor-card { border-radius: 15px; padding: 25px; text-align: center; position: relative; transition: transform 0.2s; }
+  .flavor-card:hover { transform: translateY(-5px); }
+  .flavor-card img { width: 100%; height: auto; margin: 15px 0; max-width: 180px; }
   
-  /* Badges */
-  .badge-row { display: flex; gap: 5px; position: absolute; top: 10px; left: 10px; }
-  .badge { background: white; padding: 2px 8px; font-size: 10px; font-weight: bold; border-radius: 4px; }
-  .badge.sold-out { background: #333; color: white; }
+  .badge-row { display: flex; gap: 5px; position: absolute; top: 15px; left: 15px; }
+  .badge { background: white; padding: 4px 10px; font-size: 11px; font-weight: bold; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+  .badge.sold-out { background: #5d635a; color: white; }
 
-  /* Sidebar Design */
-  .sidebar-card { border: 1px solid #ddd; border-radius: 15px; padding: 20px; background: white; }
-  .size-options { display: flex; gap: 5px; margin-bottom: 20px; }
-  .size-box { flex: 1; padding: 8px; border: 1px solid #ccc; background: white; cursor: pointer; font-size: 11px; }
-  .size-box.active { border: 2px solid #000; font-weight: bold; }
+  .sidebar-card { border: 1px solid #e1e1e1; border-radius: 20px; padding: 25px; background: white; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+  .sidebar-title { margin-top: 0; font-size: 22px; }
+  .size-options { display: flex; gap: 8px; margin: 15px 0 25px; }
+  .size-box { flex: 1; padding: 12px 5px; border: 1px solid #ccc; background: white; cursor: pointer; font-size: 12px; border-radius: 8px; transition: 0.3s; }
+  .size-box.active { border: 2px solid #000; font-weight: bold; background: #fafafa; }
   
-  .slot-circles { display: flex; gap: 10px; margin: 15px 0; }
-  .circle { width: 45px; height: 45px; border: 1px dashed #ccc; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #ccc; }
+  .slot-circles { display: flex; flex-wrap: wrap; gap: 10px; margin: 15px 0; }
+  .circle { width: 55px; height: 55px; border: 1px dashed #ccc; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #ccc; font-size: 18px; overflow: hidden; background: #fff; }
+  .circle img { width: 100%; height: 100%; object-fit: cover; }
 
-  .add-btn { width: 100%; border-radius: 20px; border: 1px solid #000; padding: 8px; background: white; font-weight: bold; cursor: pointer; }
-  .main-cta { width: 100%; padding: 15px; background: #99a194; color: white; border: none; border-radius: 25px; font-weight: bold; margin-top: 15px; }
+  .add-btn { width: 100%; border-radius: 25px; border: 1px solid #000; padding: 10px; background: white; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+  .add-btn:hover { background: #000; color: #fff; }
+  .add-btn:disabled { border-color: #ccc; color: #999; cursor: not-allowed; }
 
-  @media (max-width: 768px) {
-    .bundle-grid { flex-direction: column; }
-    .product-cards { grid-template-columns: 1fr 1fr; }
-  }
+  .main-cta { width: 100%; padding: 18px; background: #99a194; color: white; border: none; border-radius: 30px; font-weight: bold; margin-top: 20px; cursor: pointer; transition: 0.3s; }
+  .shipping-note { text-align: center; font-size: 12px; color: #666; margin-top: 15px; }
+
+  @media (max-width: 1024px) { .product-cards { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 768px) { .bundle-grid { flex-direction: column; } .bundle-sidebar { width: 100%; position: relative; } }
 </style>
 
+{% comment %} 3. THE JAVASCRIPT (THE INTERACTIVE LOGIC) {% endcomment %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   const flavorButtons = document.querySelectorAll('.add-btn');
   const sizeButtons = document.querySelectorAll('.size-box');
   const ctaButton = document.querySelector('.main-cta');
-  const counterDisplay = document.querySelector('.sidebar-step p strong:last-child'); // Target the 0/12 text
+  const slotsContainer = document.getElementById('bundle-slots-container');
+  const counterText = document.getElementById('bundle-counter-text');
   
-  let currentCount = 0;
-  let maxCount = 12; // Default size
+  let currentCount = 0; // Total cans (multiples of 4)
+  let maxCans = 12;     // Target cans
+  let totalSlots = 3;   // Number of circles to show (maxCans / 4)
 
-  // 1. Logic for switching bundle sizes
+  // --- SIZE SWITCHING LOGIC ---
   sizeButtons.forEach(btn => {
     btn.addEventListener('click', function() {
-      // UI update
       sizeButtons.forEach(b => b.classList.remove('active'));
       this.classList.add('active');
       
-      // Logic update
-      maxCount = parseInt(this.innerText);
+      maxCans = parseInt(this.innerText); // e.g., 24
+      totalSlots = parseInt(this.getAttribute('data-slots')); // e.g., 6
+      
       resetBundle();
-      updateSidebarUI();
     });
   });
 
-  // 2. Logic for adding a flavor (4-pack)
+  // --- ADD TO BUNDLE LOGIC ---
   flavorButtons.forEach(btn => {
     btn.addEventListener('click', function() {
-      if (currentCount + 4 <= maxCount) {
+      if (currentCount < maxCans) {
+        const card = this.closest('.flavor-card');
+        const imgSrc = card.querySelector('.flavor-item-img').src;
+        
+        fillNextSlot(imgSrc);
         currentCount += 4;
-        updateSidebarUI();
+        updateUI();
       } else {
-        alert("Bundle is full! Change size or remove items.");
+        alert("Your bundle is full!");
       }
     });
   });
 
-  function updateSidebarUI() {
-    // Update the counter text
-    const stepTwo = document.querySelectorAll('.sidebar-step p')[1];
-    stepTwo.innerHTML = `<strong>2</strong> Choose Flavors (${currentCount}/${maxCount})`;
+  function fillNextSlot(imgSrc) {
+    const emptySlot = slotsContainer.querySelector('.circle.empty');
+    if (emptySlot) {
+      emptySlot.innerHTML = `<img src="${imgSrc}">`;
+      emptySlot.classList.remove('empty');
+      emptySlot.style.borderStyle = 'solid';
+    }
+  }
 
-    // Logic for the Main CTA Button
-    if (currentCount === maxCount) {
-      ctaButton.innerText = "ADD TO CART";
+  function updateUI() {
+    // Update text e.g. (4/12)
+    counterText.innerHTML = `<strong>2</strong> Choose Flavors (${currentCount}/${maxCans})`;
+
+    // Update CTA Button
+    if (currentCount === maxCans) {
+      ctaButton.innerText = "ADD BUNDLE TO CART";
       ctaButton.style.backgroundColor = "#000";
       ctaButton.disabled = false;
     } else {
-      let remaining = (maxCount - currentCount) / 4;
-      ctaButton.innerText = `ADD ${remaining} MORE 4-PACKS`;
+      let packsNeeded = (maxCans - currentCount) / 4;
+      ctaButton.innerText = `ADD ${packsNeeded} MORE 4-PACKS`;
       ctaButton.style.backgroundColor = "#99a194";
       ctaButton.disabled = true;
     }
@@ -158,11 +173,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
   function resetBundle() {
     currentCount = 0;
+    // Redraw the empty slots
+    slotsContainer.innerHTML = '';
+    for (let i = 0; i < totalSlots; i++) {
+      slotsContainer.innerHTML += '<div class="circle empty">+</div>';
+    }
+    updateUI();
   }
 });
 </script>
 
-{% comment %} 3. THE SCHEMA (THE BRAIN) {% endcomment %}
+{% comment %} 4. THE SCHEMA (THE BRAIN) {% endcomment %}
 {% schema %}
 {
   "name": "Custom Bundle Builder",
@@ -196,6 +217,7 @@ document.addEventListener('DOMContentLoaded', function() {
     {
       "name": "Custom Bundle Builder",
       "blocks": [
+        { "type": "flavor" },
         { "type": "flavor" },
         { "type": "flavor" },
         { "type": "flavor" }
