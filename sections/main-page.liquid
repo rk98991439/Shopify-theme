@@ -1,71 +1,145 @@
 {% comment %} 1. THE HTML (THE STRUCTURE) {% endcomment %}
-<div class="learning-cta-wrapper" style="background-color: {{ section.settings.bg_color }};">
-  <div class="page-width">
-    <h2>{{ section.settings.heading_text }}</h2>
-    <p>{{ section.settings.subtext }}</p>
-    <a href="{{ section.settings.button_link }}" class="custom-button">
-      {{ section.settings.button_label }}
-    </a>
+<div class="bundle-main-wrapper" style="background-color: {{ section.settings.section_bg }};">
+  <div class="bundle-container">
+    
+    <div class="bundle-grid">
+      <div class="flavors-column">
+        <h2 class="section-title">{{ section.settings.flavor_title }}</h2>
+        <div class="product-cards">
+          {% for block in section.blocks %}
+            <div class="flavor-card" style="background-color: {{ block.settings.card_bg }};" {{ block.shopify_attributes }}>
+              <div class="badge-row">
+                <span class="badge">4 PACK</span>
+                {% if block.settings.sold_out %}
+                  <span class="badge sold-out">SOLD OUT</span>
+                {% endif %}
+              </div>
+              
+              {% if block.settings.flavor_img != blank %}
+                <img src="{{ block.settings.flavor_img | img_url: '400x' }}" alt="{{ block.settings.title }}">
+              {% else %}
+                {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+              {% endif %}
+              
+              <h3 class="flavor-name">{{ block.settings.title }}</h3>
+              <div class="rating">★★★★☆ (382)</div>
+              <p class="price-text">From $1.39/can</p>
+              
+              <button class="add-btn" {% if block.settings.sold_out %}disabled{% endif %}>
+                {% if block.settings.sold_out %}SOLD OUT{% else %}ADD{% endif %}
+              </button>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="bundle-sidebar">
+        <div class="sidebar-card">
+          <h3 class="sidebar-title">Your Bundle</h3>
+          
+          <div class="sidebar-step">
+            <p><strong>1</strong> Select Size</p>
+            <div class="size-options">
+              <button class="size-box active">12 PACK</button>
+              <button class="size-box">24 PACK</button>
+              <button class="size-box">36 PACK</button>
+            </div>
+          </div>
+
+          <div class="sidebar-step">
+            <p><strong>2</strong> Choose Flavors (0/12)</p>
+            <div class="slot-circles">
+              <div class="circle">+</div>
+              <div class="circle">+</div>
+              <div class="circle">+</div>
+            </div>
+          </div>
+
+          <button class="main-cta" disabled>ADD 3 MORE 4-PACKS</button>
+          <p class="shipping-note">Add $75.00 more for free shipping!</p>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
 {% comment %} 2. THE CSS (THE STYLE) {% endcomment %}
 <style>
-  .learning-cta-wrapper {
-    padding: 60px 20px;
-    text-align: center;
-    border-radius: 10px;
-    margin: 20px 0;
-  }
-  .custom-button {
-    display: inline-block;
-    padding: 12px 24px;
-    background: #000;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 5px;
-    font-weight: bold;
+  .bundle-main-wrapper { padding: 40px 0; font-family: sans-serif; }
+  .bundle-container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+  
+  /* Layout */
+  .bundle-grid { display: flex; gap: 40px; }
+  .flavors-column { flex: 3; }
+  .bundle-sidebar { flex: 1; position: sticky; top: 20px; }
+
+  /* Product Cards */
+  .product-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+  .flavor-card { border-radius: 12px; padding: 20px; text-align: center; position: relative; }
+  .flavor-card img { width: 100%; height: auto; margin: 10px 0; }
+  
+  /* Badges */
+  .badge-row { display: flex; gap: 5px; position: absolute; top: 10px; left: 10px; }
+  .badge { background: white; padding: 2px 8px; font-size: 10px; font-weight: bold; border-radius: 4px; }
+  .badge.sold-out { background: #333; color: white; }
+
+  /* Sidebar Design */
+  .sidebar-card { border: 1px solid #ddd; border-radius: 15px; padding: 20px; background: white; }
+  .size-options { display: flex; gap: 5px; margin-bottom: 20px; }
+  .size-box { flex: 1; padding: 8px; border: 1px solid #ccc; background: white; cursor: pointer; font-size: 11px; }
+  .size-box.active { border: 2px solid #000; font-weight: bold; }
+  
+  .slot-circles { display: flex; gap: 10px; margin: 15px 0; }
+  .circle { width: 45px; height: 45px; border: 1px dashed #ccc; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #ccc; }
+
+  .add-btn { width: 100%; border-radius: 20px; border: 1px solid #000; padding: 8px; background: white; font-weight: bold; cursor: pointer; }
+  .main-cta { width: 100%; padding: 15px; background: #99a194; color: white; border: none; border-radius: 25px; font-weight: bold; margin-top: 15px; }
+
+  @media (max-width: 768px) {
+    .bundle-grid { flex-direction: column; }
+    .product-cards { grid-template-columns: 1fr 1fr; }
   }
 </style>
 
 {% comment %} 3. THE SCHEMA (THE BRAIN) {% endcomment %}
 {% schema %}
 {
-  "name": "Learning CTA",
+  "name": "Custom Bundle Builder",
   "settings": [
     {
       "type": "text",
-      "id": "heading_text",
+      "id": "flavor_title",
       "label": "Heading",
-      "default": "Welcome to My Store"
-    },
-    {
-      "type": "textarea",
-      "id": "subtext",
-      "label": "Subtext",
-      "default": "Describe your brand here."
-    },
-    {
-      "type": "url",
-      "id": "button_link",
-      "label": "Button Link"
-    },
-    {
-      "type": "text",
-      "id": "button_label",
-      "label": "Button Label",
-      "default": "Shop Now"
+      "default": "Flavors"
     },
     {
       "type": "color",
-      "id": "bg_color",
-      "label": "Background Color",
-      "default": "#f4f4f4"
+      "id": "section_bg",
+      "label": "Section Background",
+      "default": "#ffffff"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "flavor",
+      "name": "Flavor Item",
+      "settings": [
+        { "type": "image_picker", "id": "flavor_img", "label": "Flavor Image" },
+        { "type": "text", "id": "title", "label": "Flavor Name", "default": "Lemon Lime" },
+        { "type": "color", "id": "card_bg", "label": "Card Background", "default": "#e1f0d7" },
+        { "type": "checkbox", "id": "sold_out", "label": "Sold Out", "default": false }
+      ]
     }
   ],
   "presets": [
     {
-      "name": "Learning CTA"
+      "name": "Custom Bundle Builder",
+      "blocks": [
+        { "type": "flavor" },
+        { "type": "flavor" },
+        { "type": "flavor" }
+      ]
     }
   ]
 }
