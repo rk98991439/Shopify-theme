@@ -118,7 +118,9 @@ document.addEventListener('DOMContentLoaded', function() {
   let currentCount = 0;
   let maxCans = 12;
   let totalSlots = 3;
+  let selectedVariantIds = []; // Array to track product IDs for the cart
 
+  // Size Switching Logic
   sizeButtons.forEach(btn => {
     btn.addEventListener('click', function() {
       sizeButtons.forEach(b => b.classList.remove('active'));
@@ -129,11 +131,16 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
+  // Adding Flavor Logic
   flavorButtons.forEach(btn => {
     btn.addEventListener('click', function() {
       if (currentCount < maxCans) {
+        const variantId = this.getAttribute('data-variant-id');
+        selectedVariantIds.push(variantId); // Store the ID
+        
         const card = this.closest('.flavor-card');
         const imgSrc = card.querySelector('.flavor-item-img').src;
+        
         fillNextSlot(imgSrc);
         currentCount += 4;
         updateUI();
@@ -141,15 +148,50 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // REMOVE LOGIC: Using Event Delegation
+  // Remove Item Logic
   slotsContainer.addEventListener('click', function(e) {
     if (e.target.classList.contains('remove-item')) {
       const slot = e.target.parentElement;
+      const indexToRemove = Array.from(slotsContainer.children).indexOf(slot);
+      
+      selectedVariantIds.splice(indexToRemove, 1); // Remove ID from array
+
       slot.innerHTML = '+';
       slot.classList.add('empty');
       slot.style.borderStyle = 'dashed';
       currentCount -= 4;
       updateUI();
+    }
+  });
+
+  // FINAL ADD TO CART LOGIC
+  ctaButton.addEventListener('click', function() {
+    if (currentCount === maxCans) {
+      ctaButton.innerText = "ADDING...";
+      ctaButton.disabled = true;
+
+      let formData = {
+        'items': selectedVariantIds.map(id => ({
+          'id': id,
+          'quantity': 1
+        }))
+      };
+
+      fetch(window.Shopify.routes.root + 'cart/add.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
+      .then(response => response.json())
+      .then(data => {
+        window.location.href = '/cart'; // Redirect to cart
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        alert("Error adding to cart.");
+        ctaButton.innerText = "ADD BUNDLE TO CART";
+        ctaButton.disabled = false;
+      });
     }
   });
 
@@ -178,6 +220,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   function resetBundle() {
     currentCount = 0;
+    selectedVariantIds = [];
     slotsContainer.innerHTML = '';
     for (let i = 0; i < totalSlots; i++) {
       slotsContainer.innerHTML += '<div class="circle empty">+</div>';
