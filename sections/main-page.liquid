@@ -60,7 +60,6 @@
         </div>
       </div>
     </div>
-
   </div>
 </div>
 
@@ -68,39 +67,43 @@
 <style>
   .bundle-main-wrapper { padding: 40px 0; font-family: sans-serif; color: #333; }
   .bundle-container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-  
   .bundle-grid { display: flex; gap: 40px; align-items: flex-start; }
   .flavors-column { flex: 3; }
   .bundle-sidebar { flex: 1; position: sticky; top: 20px; }
 
   .product-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
   .flavor-card { border-radius: 15px; padding: 25px; text-align: center; position: relative; transition: transform 0.2s; }
-  .flavor-card:hover { transform: translateY(-5px); }
   .flavor-card img { width: 100%; height: auto; margin: 15px 0; max-width: 180px; }
   
-  .badge-row { display: flex; gap: 5px; position: absolute; top: 15px; left: 15px; }
-  .badge { background: white; padding: 4px 10px; font-size: 11px; font-weight: bold; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+  .badge { background: white; padding: 4px 10px; font-size: 11px; font-weight: bold; border-radius: 4px; }
   .badge.sold-out { background: #5d635a; color: white; }
 
-  .sidebar-card { border: 1px solid #e1e1e1; border-radius: 20px; padding: 25px; background: white; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-  .sidebar-title { margin-top: 0; font-size: 22px; }
-  .size-options { display: flex; gap: 8px; margin: 15px 0 25px; }
-  .size-box { flex: 1; padding: 12px 5px; border: 1px solid #ccc; background: white; cursor: pointer; font-size: 12px; border-radius: 8px; transition: 0.3s; }
-  .size-box.active { border: 2px solid #000; font-weight: bold; background: #fafafa; }
+  .sidebar-card { border: 1px solid #e1e1e1; border-radius: 20px; padding: 25px; background: white; }
+  .size-box { flex: 1; padding: 12px 5px; border: 1px solid #ccc; background: white; cursor: pointer; border-radius: 8px; }
+  .size-box.active { border: 2px solid #000; font-weight: bold; }
   
   .slot-circles { display: flex; flex-wrap: wrap; gap: 10px; margin: 15px 0; }
-  .circle { width: 55px; height: 55px; border: 1px dashed #ccc; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #ccc; font-size: 18px; overflow: hidden; background: #fff; }
-  .circle img { width: 100%; height: 100%; object-fit: cover; }
+  .circle { 
+    width: 55px; height: 55px; border: 1px dashed #ccc; border-radius: 50%; 
+    display: flex; align-items: center; justify-content: center; 
+    color: #ccc; position: relative; background: #fff; overflow: visible;
+  }
+  .circle img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
 
-  .add-btn { width: 100%; border-radius: 25px; border: 1px solid #000; padding: 10px; background: white; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
-  .add-btn:hover { background: #000; color: #fff; }
-  .add-btn:disabled { border-color: #ccc; color: #999; cursor: not-allowed; }
+  /* The Remove "X" Button */
+  .remove-item {
+    position: absolute; top: -5px; right: -5px;
+    width: 18px; height: 18px; background: #333; color: white;
+    border-radius: 50%; font-size: 12px; line-height: 18px;
+    text-align: center; cursor: pointer; display: none; font-weight: bold;
+    border: 1px solid white; z-index: 2;
+  }
+  .circle:not(.empty) .remove-item { display: block; }
 
-  .main-cta { width: 100%; padding: 18px; background: #99a194; color: white; border: none; border-radius: 30px; font-weight: bold; margin-top: 20px; cursor: pointer; transition: 0.3s; }
-  .shipping-note { text-align: center; font-size: 12px; color: #666; margin-top: 15px; }
+  .add-btn { width: 100%; border-radius: 25px; border: 1px solid #000; padding: 10px; background: white; font-weight: bold; cursor: pointer; }
+  .main-cta { width: 100%; padding: 18px; background: #99a194; color: white; border: none; border-radius: 30px; font-weight: bold; margin-top: 20px; cursor: pointer; }
 
-  @media (max-width: 1024px) { .product-cards { grid-template-columns: 1fr 1fr; } }
-  @media (max-width: 768px) { .bundle-grid { flex-direction: column; } .bundle-sidebar { width: 100%; position: relative; } }
+  @media (max-width: 768px) { .bundle-grid { flex-direction: column; } }
 </style>
 
 {% comment %} 3. THE JAVASCRIPT (THE INTERACTIVE LOGIC) {% endcomment %}
@@ -112,53 +115,55 @@ document.addEventListener('DOMContentLoaded', function() {
   const slotsContainer = document.getElementById('bundle-slots-container');
   const counterText = document.getElementById('bundle-counter-text');
   
-  let currentCount = 0; // Total cans (multiples of 4)
-  let maxCans = 12;     // Target cans
-  let totalSlots = 3;   // Number of circles to show (maxCans / 4)
+  let currentCount = 0;
+  let maxCans = 12;
+  let totalSlots = 3;
 
-  // --- SIZE SWITCHING LOGIC ---
   sizeButtons.forEach(btn => {
     btn.addEventListener('click', function() {
       sizeButtons.forEach(b => b.classList.remove('active'));
       this.classList.add('active');
-      
-      maxCans = parseInt(this.innerText); // e.g., 24
-      totalSlots = parseInt(this.getAttribute('data-slots')); // e.g., 6
-      
+      maxCans = parseInt(this.innerText);
+      totalSlots = parseInt(this.getAttribute('data-slots'));
       resetBundle();
     });
   });
 
-  // --- ADD TO BUNDLE LOGIC ---
   flavorButtons.forEach(btn => {
     btn.addEventListener('click', function() {
       if (currentCount < maxCans) {
         const card = this.closest('.flavor-card');
         const imgSrc = card.querySelector('.flavor-item-img').src;
-        
         fillNextSlot(imgSrc);
         currentCount += 4;
         updateUI();
-      } else {
-        alert("Your bundle is full!");
       }
     });
+  });
+
+  // REMOVE LOGIC: Using Event Delegation
+  slotsContainer.addEventListener('click', function(e) {
+    if (e.target.classList.contains('remove-item')) {
+      const slot = e.target.parentElement;
+      slot.innerHTML = '+';
+      slot.classList.add('empty');
+      slot.style.borderStyle = 'dashed';
+      currentCount -= 4;
+      updateUI();
+    }
   });
 
   function fillNextSlot(imgSrc) {
     const emptySlot = slotsContainer.querySelector('.circle.empty');
     if (emptySlot) {
-      emptySlot.innerHTML = `<img src="${imgSrc}">`;
+      emptySlot.innerHTML = `<span class="remove-item">×</span><img src="${imgSrc}">`;
       emptySlot.classList.remove('empty');
       emptySlot.style.borderStyle = 'solid';
     }
   }
 
   function updateUI() {
-    // Update text e.g. (4/12)
     counterText.innerHTML = `<strong>2</strong> Choose Flavors (${currentCount}/${maxCans})`;
-
-    // Update CTA Button
     if (currentCount === maxCans) {
       ctaButton.innerText = "ADD BUNDLE TO CART";
       ctaButton.style.backgroundColor = "#000";
@@ -173,7 +178,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
   function resetBundle() {
     currentCount = 0;
-    // Redraw the empty slots
     slotsContainer.innerHTML = '';
     for (let i = 0; i < totalSlots; i++) {
       slotsContainer.innerHTML += '<div class="circle empty">+</div>';
@@ -183,23 +187,13 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-{% comment %} 4. THE SCHEMA (THE BRAIN) {% endcomment %}
+{% comment %} 4. THE SCHEMA {% endcomment %}
 {% schema %}
 {
   "name": "Custom Bundle Builder",
   "settings": [
-    {
-      "type": "text",
-      "id": "flavor_title",
-      "label": "Heading",
-      "default": "Flavors"
-    },
-    {
-      "type": "color",
-      "id": "section_bg",
-      "label": "Section Background",
-      "default": "#ffffff"
-    }
+    { "type": "text", "id": "flavor_title", "label": "Heading", "default": "Flavors" },
+    { "type": "color", "id": "section_bg", "label": "Section Background", "default": "#ffffff" }
   ],
   "blocks": [
     {
@@ -213,16 +207,6 @@ document.addEventListener('DOMContentLoaded', function() {
       ]
     }
   ],
-  "presets": [
-    {
-      "name": "Custom Bundle Builder",
-      "blocks": [
-        { "type": "flavor" },
-        { "type": "flavor" },
-        { "type": "flavor" },
-        { "type": "flavor" }
-      ]
-    }
-  ]
+  "presets": [{ "name": "Custom Bundle Builder" }]
 }
 {% endschema %}
