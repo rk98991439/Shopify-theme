@@ -12,71 +12,72 @@
     "main": {
       "type": "main-page",
       "blocks": {
-        "heading": {
-          "type": "text",
-          "name": "Title",
+        "flavor_zdKqV7": {
+          "type": "flavor",
           "settings": {
-            "text": "<h1>{{ closest.page.title }}</h1>",
-            "width": "100%",
-            "max_width": "normal",
-            "alignment": "left",
-            "type_preset": "h2",
-            "font": "var(--font-body--family)",
-            "font_size": "1rem",
-            "line_height": "normal",
-            "letter_spacing": "normal",
-            "case": "none",
-            "wrap": "pretty",
-            "color": "var(--color-foreground)",
-            "background": false,
-            "background_color": "#00000026",
-            "corner_radius": 0,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
+            "flavor_img": "shopify://shop_images/woman-in-the-city_925x_2280fb76-ec78-478c-857b-da572aa9fc28.jpg",
+            "title": "Lemon Lime",
+            "card_bg": "#e1f0d7",
+            "sold_out": false
+          }
         },
-        "image_aUCWV3": {
-          "type": "image",
-          "name": "t:names.image",
+        "flavor_Te6yHE": {
+          "type": "flavor",
           "settings": {
-            "link": "",
-            "image_ratio": "adapt",
-            "width": "fill",
-            "custom_width": 100,
-            "width_mobile": "fill",
-            "custom_width_mobile": 100,
-            "height": "fit",
-            "border": "none",
-            "border_width": 1,
-            "border_opacity": 100,
-            "border_radius": 0,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
+            "flavor_img": "shopify://shop_images/man-adjusts-blue-tuxedo-bowtie_925x_988a7cd7-ac40-4397-8f6c-23426355ecda.jpg",
+            "title": "Lemon Lime",
+            "card_bg": "#e1f0d7",
+            "sold_out": false
+          }
         },
-        "page-content": {
-          "type": "page-content",
-          "settings": {},
-          "blocks": {}
+        "flavor_Dj3igD": {
+          "type": "flavor",
+          "settings": {
+            "flavor_img": "shopify://shop_images/urban-fashion_925x_906abefb-8110-469d-b2d7-bcb191f24384.jpg",
+            "title": "Lemon Lime",
+            "card_bg": "#e1f0d7",
+            "sold_out": false
+          }
+        },
+        "flavor_U7LPjB": {
+          "type": "flavor",
+          "settings": {
+            "flavor_img": "shopify://shop_images/young-hip-woman-at-carnival_925x_2c8be9a6-5d2b-406f-ab51-465b69b3fa72.jpg",
+            "title": "Lemon Lime",
+            "card_bg": "#d7ddf0",
+            "sold_out": false
+          }
+        },
+        "flavor_abrd8r": {
+          "type": "flavor",
+          "settings": {
+            "flavor_img": "shopify://shop_images/red-plaid-shirt_925x_420252dd-4a67-44f1-a354-b0d65823bdd2.jpg",
+            "title": "Lemon Lime",
+            "card_bg": "#e1f0d7",
+            "sold_out": false
+          }
+        },
+        "flavor_Vyixt8": {
+          "type": "flavor",
+          "settings": {
+            "flavor_img": "shopify://shop_images/smiling-woman-poses_925x_4d2995d6-1c92-4084-a2ea-8213bfd4c6af.jpg",
+            "title": "Lemon Lime",
+            "card_bg": "#e1f0d7",
+            "sold_out": false
+          }
         }
       },
       "block_order": [
-        "heading",
-        "image_aUCWV3",
-        "page-content"
+        "flavor_zdKqV7",
+        "flavor_Te6yHE",
+        "flavor_Dj3igD",
+        "flavor_U7LPjB",
+        "flavor_abrd8r",
+        "flavor_Vyixt8"
       ],
       "settings": {
-        "content_direction": "column",
-        "gap": 32,
-        "color_scheme": "",
-        "padding-block-start": 40,
-        "padding-block-end": 80
+        "flavor_title": "Flavors",
+        "section_bg": "#ffffff"
       }
     }
   },
