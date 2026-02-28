@@ -1,95 +1,82 @@
+<div class="bundle-container page-width">
+  <div class="bundle-header">
+    <p>Choose your size, mix your favorite flavors & <strong>save 10%!</strong></p>
+  </div>
 
+  <div class="bundle-grid">
+    <div class="flavors-column">
+      <h2>Flavors</h2>
+      <div class="product-cards">
+        {% for block in section.blocks %}
+          {% if block.type == 'flavor' %}
+            <div class="flavor-card" style="background-color: {{ block.settings.bg_color }};">
+              <span class="badge-pack">4 PACK</span>
+              {% if block.settings.sold_out %}
+                <span class="badge-sold-out">SOLD OUT</span>
+              {% endif %}
+              
+              <img src="{{ block.settings.image | img_url: '400x' }}" alt="{{ block.settings.title }}">
+              
+              <h3>{{ block.settings.title }}</h3>
+              <div class="rating">★★★★☆ (382)</div>
+              <p class="price">From $1.39/can</p>
+              
+              <button class="add-to-bundle" 
+                data-flavor="{{ block.settings.title }}" 
+                {% if block.settings.sold_out %}disabled{% endif %}>
+                {% if block.settings.sold_out %}SOLD OUT{% else %}ADD{% endif %}
+              </button>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
 
-<div class="section-background color-{{ section.settings.color_scheme }}"></div>
-<div class="section page-width-content color-{{ section.settings.color_scheme }}">
-  <div
-    class="
-      spacing-style
-      layout-panel-flex
-      layout-panel-flex--column
-      section-content-wrapper
-      mobile-column
-    "
-    style="
-      {% render 'layout-panel-style', settings: section.settings %}
-      {% render 'spacing-style', settings: section.settings %}
-    "
-  >
-    {% content_for 'blocks' %}
+    <div class="bundle-sidebar">
+      <div class="sidebar-card">
+        <h3>Your Bundle</h3>
+        
+        <div class="step">
+          <label><span>1</span> Select Size</label>
+          <div class="size-selector">
+            <button class="size-btn active" data-size="12">12 PACK</button>
+            <button class="size-btn" data-size="24">24 PACK</button>
+            <button class="size-btn" data-size="36">36 PACK</button>
+          </div>
+        </div>
+
+        <div class="step">
+          <label><span>2</span> Choose Flavors (<span id="count">0</span>/<span id="total-target">12</span>)</label>
+          <div class="selected-slots">
+            <div class="slot empty"></div>
+            <div class="slot empty"></div>
+            <div class="slot empty"></div>
+          </div>
+        </div>
+
+        <button class="cta-button" id="add-to-cart-btn" disabled>
+          ADD 3 MORE 4-PACKS
+        </button>
+        <p class="shipping-info">Add $75.00 more for free shipping!</p>
+      </div>
+    </div>
   </div>
 </div>
 
 {% schema %}
 {
-  "name": "t:names.page",
-  "class": "section-wrapper",
+  "name": "Bundle Builder",
+  "settings": [],
   "blocks": [
     {
-      "type": "@theme"
-    },
-    {
-      "type": "@app"
-    },
-    {
-      "type": "_divider"
-    }
-  ],
-  "disabled_on": {
-    "groups": ["header"]
-  },
-  "settings": [
-    {
-      "type": "select",
-      "id": "content_direction",
-      "label": "t:settings.direction",
-      "options": [
-        {
-          "value": "column",
-          "label": "t:options.vertical"
-        }
-      ],
-      "default": "column",
-      "visible_if": "{{ section.settings.gap < 0 }}"
-    },
-    {
-      "type": "range",
-      "id": "gap",
-      "label": "t:settings.gap",
-      "min": 0,
-      "max": 100,
-      "step": 1,
-      "unit": "px",
-      "default": 12
-    },
-    {
-      "type": "color_scheme",
-      "id": "color_scheme",
-      "label": "t:settings.color_scheme",
-      "default": "scheme-1"
-    },
-    {
-      "type": "header",
-      "content": "t:content.padding"
-    },
-    {
-      "type": "range",
-      "id": "padding-block-start",
-      "label": "t:settings.top",
-      "min": 0,
-      "max": 100,
-      "step": 1,
-      "unit": "px",
-      "default": 0
-    },
-    {
-      "type": "range",
-      "id": "padding-block-end",
-      "label": "t:settings.bottom",
-      "min": 0,
-      "max": 100,
-      "step": 1,
-      "unit": "px",
-      "default": 0
+      "type": "flavor",
+      "name": "Flavor",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Flavor Image" },
+        { "type": "text", "id": "title", "label": "Flavor Name" },
+        { "type": "color", "id": "bg_color", "label": "Background Color", "default": "#e1f0d7" },
+        { "type": "checkbox", "id": "sold_out", "label": "Sold Out", "default": false }
+      ]
     }
   ]
 }
