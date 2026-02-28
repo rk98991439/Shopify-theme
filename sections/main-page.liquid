@@ -102,6 +102,66 @@
   }
 </style>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const flavorButtons = document.querySelectorAll('.add-btn');
+  const sizeButtons = document.querySelectorAll('.size-box');
+  const ctaButton = document.querySelector('.main-cta');
+  const counterDisplay = document.querySelector('.sidebar-step p strong:last-child'); // Target the 0/12 text
+  
+  let currentCount = 0;
+  let maxCount = 12; // Default size
+
+  // 1. Logic for switching bundle sizes
+  sizeButtons.forEach(btn => {
+    btn.addEventListener('click', function() {
+      // UI update
+      sizeButtons.forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      
+      // Logic update
+      maxCount = parseInt(this.innerText);
+      resetBundle();
+      updateSidebarUI();
+    });
+  });
+
+  // 2. Logic for adding a flavor (4-pack)
+  flavorButtons.forEach(btn => {
+    btn.addEventListener('click', function() {
+      if (currentCount + 4 <= maxCount) {
+        currentCount += 4;
+        updateSidebarUI();
+      } else {
+        alert("Bundle is full! Change size or remove items.");
+      }
+    });
+  });
+
+  function updateSidebarUI() {
+    // Update the counter text
+    const stepTwo = document.querySelectorAll('.sidebar-step p')[1];
+    stepTwo.innerHTML = `<strong>2</strong> Choose Flavors (${currentCount}/${maxCount})`;
+
+    // Logic for the Main CTA Button
+    if (currentCount === maxCount) {
+      ctaButton.innerText = "ADD TO CART";
+      ctaButton.style.backgroundColor = "#000";
+      ctaButton.disabled = false;
+    } else {
+      let remaining = (maxCount - currentCount) / 4;
+      ctaButton.innerText = `ADD ${remaining} MORE 4-PACKS`;
+      ctaButton.style.backgroundColor = "#99a194";
+      ctaButton.disabled = true;
+    }
+  }
+
+  function resetBundle() {
+    currentCount = 0;
+  }
+});
+</script>
+
 {% comment %} 3. THE SCHEMA (THE BRAIN) {% endcomment %}
 {% schema %}
 {
