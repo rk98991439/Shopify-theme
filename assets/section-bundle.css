@@ -1,0 +1,93 @@
+.bundle-grid {
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 40px;
+  padding: 20px;
+}
+
+.product-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.flavor-card {
+  border-radius: 15px;
+  padding: 20px;
+  text-align: center;
+  position: relative;
+}
+
+.flavor-card img {
+  max-width: 100%;
+  height: auto;
+  margin-bottom: 15px;
+}
+
+.add-to-bundle {
+  width: 100%;
+  padding: 10px;
+  border-radius: 20px;
+  border: 1px solid #000;
+  background: white;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.add-to-bundle:disabled {
+  background: #99a194;
+  border-color: #99a194;
+  color: white;
+  cursor: not-allowed;
+}
+
+/* Sidebar Styling */
+.sidebar-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 20px;
+  padding: 25px;
+  position: sticky;
+  top: 20px;
+}
+
+.size-selector {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.size-btn {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background: white;
+}
+
+.size-btn.active {
+  border: 2px solid #000;
+  font-weight: bold;
+}
+
+.selected-slots {
+  display: flex;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.slot {
+  width: 50px;
+  height: 50px;
+  border: 1px dashed #ccc;
+  border-radius: 50%;
+}
+
+.cta-button {
+  width: 100%;
+  padding: 15px;
+  background: #99a194; /* Greyed out until full */
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-weight: bold;
+}
